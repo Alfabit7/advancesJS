@@ -58,15 +58,56 @@ const booksDB = [
         id: Symbol(),
         author: 'Адитья Бхаргава',
         title: 'Грокаем алгоритмы',
-    }
+    },
+];
+
+const booksIncludeDuplicateElementDB = [
+    {
+        id: Symbol(),
+        author: 'Рэй Далио',
+        title: 'Принципы',
+    },
+    {
+        id: Symbol(),
+        author: 'Кембридж Ха-Джун Чанг',
+        title: 'Как устроена экономика',
+    },
+    {
+        id: Symbol(),
+        author: 'Танинбаум',
+        title: 'Компьютерные сети',
+    },
+    {
+        id: Symbol(),
+        author: 'Адитья Бхаргава',
+        title: 'Грокаем алгоритмы',
+    },
+    {
+        id: Symbol(),
+        author: 'Адитья Бхаргава',
+        title: 'Грокаем алгоритмы',
+    },
 ];
 
 class Library {
     #books = [];
     index = null;
+    static uniqueValues = new Set();
+
     constructor(books) {
-        this.#books = books;
+        //Проверка входящего массива на дубликат книги 
+        books.forEach(objBook => {
+            const identifier = JSON.stringify(objBook);
+            if (Library.uniqueValues.has(identifier)) {
+                throw new Error('Массив содержит дупликат книги');
+            } else {
+                Library.uniqueValues.add(identifier);
+                this.#books.push(JSON.parse(identifier));
+            }
+        })
+        this.uniqueValues = null;
     }
+
     get allBooks() {
         console.log('Список книг');
         this.#books.forEach(book => {
@@ -80,7 +121,7 @@ class Library {
         if (!this.hasBook(newBookObject)) {
             this.#books.push(newBookObject);
         } else {
-            throw `Книга с названием: '${newBookObject.title}' есть в библиотеке`;
+            throw `Книга с названием: "${newBookObject.title}" есть в библиотеке`;
         }
 
     }
@@ -89,7 +130,7 @@ class Library {
         if (this.hasBook(bookObject)) {
             this.#books.splice(this.index, 1)
         } else {
-            throw `Книги с названием: '${bookObject.title}' нет в библиотеке`;
+            throw `Книги с названием: "${bookObject.title}" нет в библиотеке`;
         }
     }
 
@@ -103,6 +144,9 @@ class Library {
 
 
 const libEx = new Library(booksDB);
+//Вызов конструктора с массивом содержащим дубликат
+// const libEx = new Library(booksIncludeDuplicateElementDB);
+
 libEx.allBooks;
 
 libEx.addBook(newBook);
@@ -114,7 +158,7 @@ libEx.allBooks;
 libEx.removeBook(deleteBook)
 libEx.allBooks;
 
-//Удаления с ошибкой отсутствия книги в библиотеке
+// Удаления с ошибкой отсутствия книги в библиотеке
 libEx.removeBook(deleteBook1)
 libEx.allBooks;
 
